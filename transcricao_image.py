@@ -24,6 +24,7 @@ model = genai.GenerativeModel(
 reviews = pd.read_csv('reviews-entrega-MercadoAgil-imagens.csv')
 for index, review in reviews.iterrows():
   reviewer_id = review['reviewer_id']
+  reviewer_name = review['reviewer_name']
   reviewer_email = review['reviewer_email']
   review_image = review['review_image']
   
@@ -31,7 +32,7 @@ for index, review in reviews.iterrows():
   
   image_file = genai.upload_file(path=path_image)
   
-  prompt = 'Transcreva a imagem em anexo'
+  prompt = f'Transcreva a imagem em anexo, o conteúdo se refere à logistica de entrega para o cliente {reviewer_name}'
   response = model.generate_content([prompt, image_file])
 
   transcricao = response.text
@@ -39,3 +40,6 @@ for index, review in reviews.iterrows():
   print(reviewer_email)
   print(transcricao)
   print('\n')
+  
+  with open(f'transcricoes-imagem/{reviewer_id}.txt', 'w', encoding='utf-8') as arquivo:
+    arquivo.write(transcricao)
